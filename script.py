@@ -22,6 +22,7 @@ settings = {
 df = pd.read_csv("output.csv")
 
 def run_workload(workload):
+  # need to confirm that these work
   if (workload == "browsing"):
     subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.twitter.com"], capture_output=True, text=True)
   elif (workload == "music"):
@@ -42,32 +43,25 @@ def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh
   print( subprocess.run(["adb", "shell", "settings", "put", "system", "screen_brightness", str(device_brightness)], capture_output=True, text=True).stdout)
 
   # bluetooth
-  # adb shell settings put global bluetooth_disabled_profiles 1 / 0
+  # May need to forget about BT because it's not working
   print(f"adb shell settings put global bluetooth_disabled_profiles {bluetooth}")
   print( subprocess.run( ["adb", "shell", "settings", "put", "global", "bluetooth_disabled_profiles", f"{bluetooth}"], capture_output=True, text=True).stdout)
 
   # gps
-  if gps == 0:
-    print("adb shell settings put secure location_providers_allowed -gps")
-    subprocess.run(["adb", "shell", "settings", "put", "secure", "location_providers_allowed", "-gps"], capture_output=True, text=True)
-  else:
-    print("adb shell settings put secure location_providers_allowed +gps")
-    subprocess.run(["adb", "shell", "settings", "put", "secure", "location_providers_allowed", "+gps"], capture_output=True, text=True)
+  print(f"adb shell settings put secure location_providers_allowed {'-' if gps == 0 else '+'}gps")
+  print (subprocess.run(["adb", "shell", "settings", "put", "secure", "location_providers_allowed", f"{"-" if gps == 0 else "+"}gps"], capture_output=True, text=True).stdout)
 
   # power_saving
-  if power_saving == 0:
-    print("adb shell settings put global low_power 0")
-    subprocess.run(["adb", "shell", "settings", "put", "global", "low_power", "0"], capture_output=True, text=True)
-  else:
-    print("adb shell settings put global low_power 1")
-    subprocess.run(["adb", "shell", "settings", "put", "global", "low_power", "1"], capture_output=True, text=True)
+  print(f"adb shell settings put global low_power {"0" if power_saving == 0 else "1"}")
+  print(subprocess.run(["adb", "shell", "settings", "put", "global", "low_power", f"{"0" if power_saving == 0 else "1"}"], capture_output=True, text=True).stdout)
 
   # refresh_rate
   print(f"adb shell settings put system peak_refresh_rate {refresh_rate}")
-  subprocess.run(["adb", "shell", "settings", "put", "system", "peak_refresh_rate", str(refresh_rate)], capture_output=True, text=True)
-
-  print(f"adb shell settings put system min_refresh_rate {refresh_rate}")
-  subprocess.run(["adb", "shell", "settings", "put", "system", "min_refresh_rate", str(refresh_rate)], capture_output=True, text=True)
+  if(refresh_rate == 60):
+    subprocess.run(["adb", "shell", "settings", "put", "system", "peak_refresh_rate", "60"], capture_output=True, text=True)
+  elif(refresh_rate == 120):
+    subprocess.run(["adb", "shell", "settings", "put", "system", "peak_refresh_rate", "120"], capture_output=True, text=True)
+    subprocess.run(["adb", "shell", "settings", "put", "system", "min_refresh_rate", "120"], capture_output=True, text=True)
 
   run_workload(workload)
 
