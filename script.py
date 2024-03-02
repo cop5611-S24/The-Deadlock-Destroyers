@@ -67,19 +67,23 @@ def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rat
   print(f"adb shell settings put system peak_refresh_rate {refresh_rate}")
   subprocess.run(["adb", "shell", "settings", "put", "system", "peak_refresh_rate", str(refresh_rate)], capture_output=True, text=True)
 
+  print(f"adb shell settings put system min_refresh_rate {refresh_rate}")
+  subprocess.run(["adb", "shell", "settings", "put", "system", "min_refresh_rate", str(refresh_rate)], capture_output=True, text=True)
 
+  if (browsing == 0):
+    print("adb shell am force-stop com.android.chrome")
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.android.chrome"], capture_output=True, text=True)
+  else:
+    print("adb shell am start -a android.intent.action.VIEW -d http://www.twitter.com")
+    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.twitter.com"], capture_output=True, text=True)
+  
+  if (music_playing == 0):
+    print("adb shell am force-stop com.spotify.music")
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.spotify.music"], capture_output=True, text=True)
+  else:
+    print("adb shell am start -a android.intent.action.VIEW spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play")
+    subprocess.run(["adb", "shell" , "am", "start", "-a", "android.intent.action.VIEW", "spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play"])
 
-  # # browsing
-  # if browsing == 1:
-  #   print("adb shell am start -a android.intent.action.VIEW -d http://www.twitter.com")
-  #   subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.twitter.com"], capture_output=True, text=True)
-
-  # # music_playing
-  # if music_playing == 1:
-  #   print("adb shell am start -a android.intent.action.VIEW -d http://www.spotify.com")
-  #   subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.spotify.com"], capture_output=True, text=True)
-
-  # end of configuration
 
 
 device_max_sreen_brightness_range = [22, 4095]
