@@ -18,10 +18,11 @@ settings = {
   "music_playing": [0, 1]
 }
 
-df = pd.DataFrame(columns=["timestamp", "currentCharge"] + list(settings.keys()))
+#df = pd.DataFrame(columns=["timestamp", "currentCharge"] + list(settings.keys()))
 # Now we need to populate the dataframe with all the possible combinations.
-for combination in itertools.product(*settings.values()):
-  df = df._append(pd.Series([None, None] + list(combination), index=df.columns), ignore_index=True)
+#for combination in itertools.product(*settings.values()):
+#  df = df._append(pd.Series([None, None] + list(combination), index=df.columns), ignore_index=True)
+df = pd.read_csv("output.csv")
 
 def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rate, game_enabled, video_playing_resolution, browsing, music_playing):
   # brightness
@@ -75,6 +76,7 @@ def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rat
     subprocess.run(["adb", "shell", "am", "force-stop", "com.android.chrome"], capture_output=True, text=True)
   else:
     print("adb shell am start -a android.intent.action.VIEW -d http://www.twitter.com")
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.android.chrome"], capture_output=True, text=True)
     subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.twitter.com"], capture_output=True, text=True)
   
   if (music_playing == 0):
@@ -82,13 +84,22 @@ def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rat
     subprocess.run(["adb", "shell", "am", "force-stop", "com.spotify.music"], capture_output=True, text=True)
   else:
     print("adb shell am start -a android.intent.action.VIEW spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play")
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.spotify.music"], capture_output=True, text=True)
     subprocess.run(["adb", "shell" , "am", "start", "-a", "android.intent.action.VIEW", "spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play"])
   
   if (game_enabled == 0):
-    return ["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"]
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"])
   else:
-    return ["adb", "shell", "am", "start", "com.rovio.angrybirds/com.rovio.ka3d.App"]
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"])
+    subprocess.run(["adb", "shell", "am", "start", "com.rovio.angrybirds/com.rovio.ka3d.App"])
   
+  
+  subprocess.run(["adb", "shell", "am", "force-stop", "com.google.android.youtube"])
+  if (video_playing_resolution == "720p"):
+    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.youtube.com/watch?v=YRhFSWz_J3I", "--ei", "resolution", "720"])
+  elif(video_playing_resolution == "1080p"):
+    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.youtube.com/watch?v=YRhFSWz_J3I", "--ei", "resolution", "1080"])
+
   
 
 
@@ -113,6 +124,7 @@ tempres = ""
 # Store the results in a file
 # Sleep for 2 minutes.
 # Repeat
+df_copy = df.copy()
 for index, row in df.iterrows():
 
   # ---------- CONFIGURATION COMMANDS GO HERE ----------
@@ -136,11 +148,17 @@ for index, row in df.iterrows():
 
   # ---------- DATA STORAGE COMMANDS GO HERE -----------
   tempres += f"{current_time},{current_battery_level}, Iteration: {iteration_counter}\n"
-
+  df[current_time] = current_time
+  df[current_battery_level] = current_battery_level
+  if (index == 0):
+      df.to_csv("result.csv", index =False)
+  else:
+      with (open("result.csv", "a")) as f:
+          f.write(row)
   # ----------------------------------------------------
-
   iteration_counter += 1
-  time.sleep(5)
+  time.sleep(120)
+  exit(0)
 
 
 # with open("output.csv", "w") as f:
