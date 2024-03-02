@@ -88,10 +88,10 @@ def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rat
     subprocess.run(["adb", "shell" , "am", "start", "-a", "android.intent.action.VIEW", "spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play"])
   
   if (game_enabled == 0):
-    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"])
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.baba"])
   else:
-    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"])
-    subprocess.run(["adb", "shell", "am", "start", "com.rovio.angrybirds/com.rovio.ka3d.App"])
+    subprocess.run(["adb", "shell", "am", "force-stop", "com.rovio.baba"])
+    subprocess.run(["adb", "shell", "am", "start",  "-n", "com.rovio.baba/com.unity3d.player.UnityPlayerActivity"])  
   
   
   subprocess.run(["adb", "shell", "am", "force-stop", "com.google.android.youtube"])
@@ -148,13 +148,16 @@ for index, row in df.iterrows():
 
   # ---------- DATA STORAGE COMMANDS GO HERE -----------
   tempres += f"{current_time},{current_battery_level}, Iteration: {iteration_counter}\n"
-  df[current_time] = current_time
-  df[current_battery_level] = current_battery_level
+  row['current_time'] = current_time
+  row['current_battery_level'] = current_battery_level
   if (index == 0):
-      df.to_csv("result.csv", index =False)
-  else:
-      with (open("result.csv", "a")) as f:
-          f.write(row)
+      with open("result.csv", "a") as f:
+          f.write(','.join(df.columns) + '\n')
+
+  row_string = str(row['current_time']) + "," + str(row["current_battery_level"]) + "," + str(row["brightness"]) + "," + str(row["wifi"]) + "," + str(row["bluetooth"]) + "," + str(row["gps"]) + "," + str(row["power_saving"]) + "," + str(row["refresh_rate"]) + "," + str(row["game_enabled"]) + "," + str(row["video_playing_resolution"]) + "," + str(row["browsing"]) + "," + str(row["music_playing"]) + "\n"
+
+  with open("result.csv", "a") as f:
+      f.write(row_string)
   # ----------------------------------------------------
   iteration_counter += 1
   time.sleep(120)
