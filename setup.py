@@ -11,7 +11,7 @@ settings = {
   "power_saving": [0, 1],
   "refresh_rate": [60, 120],
   "game_enabled": [0, 1],
-  "video_playing_resolution": ["720p", "1080p"],
+  "video_playing_resolution": ["0p", "720p", "1080p"],
   "browsing": [0, 1],
   "music_playing": [0, 1]
 }
