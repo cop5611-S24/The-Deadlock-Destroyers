@@ -8,14 +8,14 @@ settings = {
   # application workloads are mutually exclusive
   "application_workload": ["none", "game", "video720", "video1080", "browsing", "music"],
   "brightness": [0, 20, 40, 60, 80, 100],
-  "bluetooth": [0, 1],
+  # "bluetooth": [0, 1],
   "gps": [0, 1],
   "power_saving": [0, 1],
   "refresh_rate": [60, 120],
   # wifi always on because we need to debug via adb wirelessly
 }
 
-#df = pd.DataFrame(columns=["timestamp", "currentCharge"] + list(settings.keys()))
+# df = pd.DataFrame(columns=["timestamp", "currentCharge"] + list(settings.keys()))
 # Now we need to populate the dataframe with all the possible combinations.
 #for combination in itertools.product(*settings.values()):
 #  df = df._append(pd.Series([None, None] + list(combination), index=df.columns), ignore_index=True)
@@ -34,7 +34,8 @@ def run_workload(workload):
   elif (workload == "video1080"):
     subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.youtube.com/watch?v=YRhFSWz_J3I", "--ei", "resolution", "1080"], capture_output=True, text=True)
 
-def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh_rate):
+# def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh_rate):
+def configure_device(workload, brightness, gps, power_saving, refresh_rate):
   # brightness
   device_max_sreen_brightness_range = [22, 4095]
   device_brightness = (brightness / 100) * (device_max_sreen_brightness_range[1] - device_max_sreen_brightness_range[0]) + device_max_sreen_brightness_range[0]
@@ -44,8 +45,8 @@ def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh
 
   # bluetooth
   # May need to forget about BT because it's not working
-  print(f"adb shell settings put global bluetooth_disabled_profiles {bluetooth}")
-  print( subprocess.run( ["adb", "shell", "settings", "put", "global", "bluetooth_disabled_profiles", f"{bluetooth}"], capture_output=True, text=True).stdout)
+  # print(f"adb shell settings put global bluetooth_disabled_profiles {bluetooth}")
+  # print( subprocess.run( ["adb", "shell", "settings", "put", "global", "bluetooth_disabled_profiles", f"{bluetooth}"], capture_output=True, text=True).stdout)
 
   # gps
   print(f"adb shell settings put secure location_providers_allowed {'-' if gps == 0 else '+'}gps")
@@ -112,15 +113,18 @@ for index, row in df.iterrows():
   # ----------------------------------------------------
 
   # ---------- DATA STORAGE COMMANDS GO HERE -----------
-  tempres += f"{current_time},{current_battery_level}, Iteration: {iteration_counter}\n"
-  row['current_time'] = current_time
-  row['current_battery_level'] = current_battery_level
+  row['currentCharge'] = charge_counter
+  row['timestamp'] = round(current_time)
   if (index == 0):
       with open("result.csv", "a") as f:
-          f.write(','.join(df.columns) + '\n')
-
+          col_list = df.columns.tolist()
+          # col_list.reverse()
+          f.write(','.join(col_list) + '\n')
+  print("row",row)
   # row_string = str(row['current_time']) + "," + str(row["current_battery_level"]) + "," + str(row["brightness"]) + "," + str(row["wifi"]) + "," + str(row["bluetooth"]) + "," + str(row["gps"]) + "," + str(row["power_saving"]) + "," + str(row["refresh_rate"]) + "," + str(row["game_enabled"]) + "," + str(row["video_playing_resolution"]) + "," + str(row["browsing"]) + "," + str(row["music_playing"]) + "\n"
-  row_string = ','.join([str(x) for x in row]) + '\n'
+  row_list = row.tolist()
+  row_string = ','.join([str(x) for x in row_list]) + '\n'
+
 
   with open("result.csv", "a") as f:
       f.write(row_string)

@@ -7,7 +7,7 @@ settings = {
   # application workloads are mutually exclusive
   "application_workload": ["none", "game", "video720", "video1080", "browsing", "music"],
   "brightness": [0, 20, 40, 60, 80, 100],
-  "bluetooth": [0, 1],
+  # "bluetooth": [0, 1],
   "gps": [0, 1],
   "power_saving": [0, 1],
   "refresh_rate": [60, 120],
