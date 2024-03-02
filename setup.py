@@ -28,4 +28,4 @@ for combination in itertools.product(*settings.values()):
 
 # print dataframe as csv
 
-df.to_csv("output_1.csv", index=False)
+df.to_csv("output.csv", index=False)
