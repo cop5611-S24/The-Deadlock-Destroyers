@@ -83,6 +83,13 @@ def configure_device(brightness, wifi, bluetooth, gps, power_saving, refresh_rat
   else:
     print("adb shell am start -a android.intent.action.VIEW spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play")
     subprocess.run(["adb", "shell" , "am", "start", "-a", "android.intent.action.VIEW", "spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play"])
+  
+  if (game_enabled == 0):
+    return ["adb", "shell", "am", "force-stop", "com.rovio.angrybirds"]
+  else:
+    return ["adb", "shell", "am", "start", "com.rovio.angrybirds/com.rovio.ka3d.App"]
+  
+  
 
 
 
