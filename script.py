@@ -29,10 +29,12 @@ def run_workload(workload):
     subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "spotify:playlist:4bfj9Go9YnSq7L4YeWTWeY:play"], capture_output=True, text=True)
   elif (workload == "game"):
     subprocess.run(["adb", "shell", "am", "start",  "-n", "com.rovio.baba/com.unity3d.player.UnityPlayerActivity"], capture_output=True, text=True)
+    # adb shell am start -n com.rovio.baba/com.unity3d.player.UnityPlayerActivity
   elif (workload == "video720"):
-    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.youtube.com/watch?v=YRhFSWz_J3I", "--ei", "resolution", "720"], capture_output=True, text=True)
+    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", '"https://www.youtube.com/watch?v=Z5NoQg8LdDk?vq=hd720"', "--ei", "resolution", "720"], capture_output=True, text=True)
+    # adb shell am start -a android.intent.action.VIEW -d "https://www.youtube.com/watch?v=Z5NoQg8LdDk" --ei resolution 720
   elif (workload == "video1080"):
-    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", "http://www.youtube.com/watch?v=YRhFSWz_J3I", "--ei", "resolution", "1080"], capture_output=True, text=True)
+    subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", '"https://www.youtube.com/watch?v=Z5NoQg8LdDk?vq=hd1080"', "--ei", "resolution", "1080"], capture_output=True, text=True)
 
 # def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh_rate):
 def configure_device(workload, brightness, gps, power_saving, refresh_rate):
