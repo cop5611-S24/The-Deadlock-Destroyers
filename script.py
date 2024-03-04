@@ -76,7 +76,8 @@ for i in range(len(device_brightness_percentages)):
 print(device_brightness_percentages)
 
 # In case the script needs to be stopped, use this variable to know where to start from
-iteration_counter = 1
+iteration_counter = 238
+current_iteration = 1
 tempres = ""
 df_copy = df.copy()
 
@@ -89,6 +90,11 @@ df_copy = df.copy()
   Repeat
 """
 for index, row in df.iterrows():
+  if current_iteration < iteration_counter:
+    print(f"Skipping iteration {current_iteration}")
+    current_iteration += 1
+    continue
+  current_iteration += 1
 
   # ---------- CONFIGURATION COMMANDS GO HERE ----------
   configure_device(*row[2:])
