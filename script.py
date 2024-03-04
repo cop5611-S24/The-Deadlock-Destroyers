@@ -8,7 +8,6 @@ settings = {
   # application workloads are mutually exclusive
   "application_workload": ["none", "game", "video720", "video1080", "browsing", "music"],
   "brightness": [0, 20, 40, 60, 80, 100],
-  # "bluetooth": [0, 1],
   "gps": [0, 1],
   "power_saving": [0, 1],
   "refresh_rate": [60, 120],
@@ -37,7 +36,7 @@ def run_workload(workload):
   elif (workload == "video1080"):
     subprocess.run(["adb", "shell", "am", "start", "-a", "android.intent.action.VIEW", "-d", '"https://www.youtube.com/watch?v=BRMcblgBekc"'], capture_output=True, text=True)
     # adb shell am start -a android.intent.action.VIEW -d "https://www.youtube.com/watch?v=BRMcblgBekc"
-# def configure_device(workload, brightness, bluetooth, gps, power_saving, refresh_rate):
+
 def configure_device(workload, brightness, gps, power_saving, refresh_rate):
   # brightness
   device_max_sreen_brightness_range = [22, 4095]
@@ -45,11 +44,6 @@ def configure_device(workload, brightness, gps, power_saving, refresh_rate):
   device_brightness = round(device_brightness)
   print(f"adb shell settings put system screen_brightness {device_brightness}")
   print( subprocess.run(["adb", "shell", "settings", "put", "system", "screen_brightness", str(device_brightness)], capture_output=True, text=True).stdout)
-
-  # bluetooth
-  # May need to forget about BT because it's not working
-  # print(f"adb shell settings put global bluetooth_disabled_profiles {bluetooth}")
-  # print( subprocess.run( ["adb", "shell", "settings", "put", "global", "bluetooth_disabled_profiles", f"{bluetooth}"], capture_output=True, text=True).stdout)
 
   # gps
   print(f"adb shell settings put secure location_providers_allowed {'-' if gps == 0 else '+'}gps")
@@ -134,8 +128,10 @@ for index, row in df.iterrows():
   # ----------------------------------------------------
 
   print(f"Iteration: {iteration_counter}")
+  with open("iterationcount.txt", "w") as f:
+    f.write(str(iteration_counter))
   iteration_counter += 1
-  time.sleep(10)
+  time.sleep(120)
   # exit(0)
 
 
