@@ -76,7 +76,7 @@ for i in range(len(device_brightness_percentages)):
 print(device_brightness_percentages)
 
 # In case the script needs to be stopped, use this variable to know where to start from
-iteration_counter = 238
+iteration_counter = 237
 current_iteration = 1
 tempres = ""
 df_copy = df.copy()
