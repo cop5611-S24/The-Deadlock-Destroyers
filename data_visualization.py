@@ -10,9 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
 
-def split_data_frame ():
-    return 
-
 
 color = sns.color_palette()
 if __name__=='__main__':
