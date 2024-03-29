@@ -91,7 +91,21 @@ if __name__=='__main__':
     print(len(charge_rate_list_df1))
     print(len(charge_rate_list_df2))
     df['discharge_rate'] = charge_rate_list_df1 + charge_rate_list_df2
+    #df.to_csv('cleaned_result.csv', index = False)
+
+    for index, row in df.iterrows():
+        if row['application_workload']  == 'none':
+            df.at[index, 'application_workload'] = 0
+        elif row['application_workload'] == 'game':
+            df.at[index, 'application_workload'] =1
+        elif row['application_workload'] == 'video720':
+            df.at[index, 'application_workload'] = 2
+        elif row['application_workload'] == 'video1080':
+            df.at[index, 'application_workload'] = 3
+        elif row['application_workload'] == 'browsing':
+            df.at[index, 'application_workload'] = 4
+        elif row['application_workload'] == 'music':
+            df.at[index, 'application_workload'] = 5
+    #we need to turn the string columns into numbers
     df.to_csv('cleaned_result.csv', index = False)
-        
-    
           
