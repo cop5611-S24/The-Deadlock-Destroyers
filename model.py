@@ -11,7 +11,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import BayesianRidge
-
+from sklearn.linear_model import LinearRegression
 np.random.seed(41)
 
 def calc_normalized_RMSE(y_test, predicted):
@@ -55,12 +55,27 @@ def support_vector_regressor(df, y):
 
 
 def linear_regressor(df, y):
-    pass
+    df.drop(columns=['timestamp','currentCharge'],inplace=True)
+    X = df
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    model = LinearRegression()
+    model.fit(X_train, y_train)
+
+    y_pred = model.predict(X_test)
+    print(y_train)
+    mse = mean_squared_error(y_test, y_pred)
+    print("Mean Squared Error:", mse)
+
+    # Print coefficients
+    print("Intercept:", model.intercept_)
+    print("Coefficient:", model.coef_)
 
 
 if __name__ == "__main__":
     df = pd.read_csv("cleaned_result.csv")
     y = df['discharge_rate']
     df.drop(columns = ['discharge_rate'], inplace=True)
-    random_forest_regressor(df, y)
-    bayesian_regressor(df, y)
+    # random_forest_regressor(df, y)
+    # bayesian_regressor(df, y)
+    linear_regressor(df,y)
