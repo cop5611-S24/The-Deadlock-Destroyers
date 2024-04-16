@@ -1,10 +1,10 @@
 #! /usr/bin/python
-import pandas as pd 
-import numpy as np 
+import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns 
+import seaborn as sns
 from math import sqrt
-import xgboost as xgb 
+import xgboost as xgb
 from math import sqrt
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
@@ -12,6 +12,8 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import BayesianRidge
 from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVR
+from sklearn.preprocessing import StandardScaler
 np.random.seed(41)
 
 def calc_normalized_RMSE(y_test, predicted):
@@ -51,13 +53,37 @@ def bayesian_regressor(df, y):
     print(temp)
 
 def support_vector_regressor(df, y):
+    df.drop(columns=['timestamp','currentCharge'],inplace=True)
     X = df
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Feature scaling
+    sc_X = StandardScaler()
+    sc_y = StandardScaler()
+    X_train_scaled = sc_X.fit_transform(X_train)
+    y_train_scaled = sc_y.fit_transform(y_train)
+
+    svr_regressor = SVR(kernel='rbf')  # You can choose different kernels like 'linear', 'poly', 'sigmoid','rbf' etc.
+    svr_regressor.fit(X_train_scaled, y_train_scaled.ravel())
+
+    y_pred_scaled = svr_regressor.predict(sc_X.transform(X_test))
+    y_pred = sc_y.inverse_transform(y_pred_scaled)
+
+    mse = mean_squared_error(y_test, y_pred)
+    print("Mean Squared Error:", mse)
+
+    plt.scatter(y_test, y_pred)
+    plt.xlabel('Actual')
+    plt.ylabel('Predicted')
+    plt.title('SVR: Actual vs Predicted')
+    plt.show()
+    
 
 
 def linear_regressor(df, y):
     df.drop(columns=['timestamp','currentCharge'],inplace=True)
     X = df
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.33, random_state=42)
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -78,4 +104,5 @@ if __name__ == "__main__":
     df.drop(columns = ['discharge_rate'], inplace=True)
     # random_forest_regressor(df, y)
     # bayesian_regressor(df, y)
-    linear_regressor(df,y)
+    # linear_regressor(df,y)
+    support_vector_regressor(df,y)
