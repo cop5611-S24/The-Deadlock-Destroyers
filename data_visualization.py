@@ -16,9 +16,10 @@ color = sns.color_palette()
 
 def gen_box_plots (df_filtered, feature):
     sns.set_style("whitegrid")
-    sns.boxplot(x= 'brightness', y = 'discharge_rate', data= df_filtered)
-    plt.savefig('boxplot.png')
-
+    sns.boxplot(x= feature, y = 'discharge_rate', data= df_filtered)
+    name_to_save = 'plots/boxplot/'+feature + '_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
 
 
 
@@ -34,5 +35,10 @@ if __name__=='__main__':
     upper_whisker = third_quartile + 1.5 * inter_quartile_range
     outliers = df[(df['discharge_rate'] < lower_whisker) | (df['discharge_rate']> upper_whisker)]
     df_filtered = df.drop(outliers.index)
+    gen_box_plots(df_filtered, 'brightness')
+    gen_box_plots(df_filtered, 'gps')
+    gen_box_plots(df_filtered, 'application_workload')
+    gen_box_plots(df_filtered, 'power_saving')
+    gen_box_plots(df_filtered, 'refresh_rate')
     #I will make 5 plots then call it a day 
     #So we will have boxplots for each feature 
