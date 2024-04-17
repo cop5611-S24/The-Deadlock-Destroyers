@@ -10,11 +10,11 @@ import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn.tree import DecisionTreeClassifier
 color = sns.color_palette()
 
 
-def gen_box_plots (df_filtered, feature):
+def gen_box_plot(df_filtered, feature):
     sns.set_style("whitegrid")
     sns.boxplot(x= feature, y = 'discharge_rate', data= df_filtered)
     name_to_save = 'plots/boxplot/'+feature + '_vs_discharge_rate.png'
@@ -22,10 +22,19 @@ def gen_box_plots (df_filtered, feature):
     plt.clf()
 
 
+def gen_violin_plot(df_filtered, feature):
+    #https://seaborn.pydata.org/generated/seaborn.violinplot.html
+    sns.set_style("whitegrid")
+    sns.violinplot(data=df_filtered, x=feature, y="discharge_rate")
+    name_to_save = 'plots/violin/'+feature+'_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
 
+def gen_density_estimation(df, feature):
+    #https://seaborn.pydata.org/tutorial/distributions.html
+    pass
 
 if __name__=='__main__':
-
     # https://saturncloud.io/blog/how-to-detect-and-exclude-outliers-in-a-pandas-dataframe/
     df = pd.read_csv('cleaned_result.csv')
     first_quartile = df['discharge_rate'].quantile(0.25)
@@ -35,10 +44,23 @@ if __name__=='__main__':
     upper_whisker = third_quartile + 1.5 * inter_quartile_range
     outliers = df[(df['discharge_rate'] < lower_whisker) | (df['discharge_rate']> upper_whisker)]
     df_filtered = df.drop(outliers.index)
-    gen_box_plots(df_filtered, 'brightness')
-    gen_box_plots(df_filtered, 'gps')
-    gen_box_plots(df_filtered, 'application_workload')
-    gen_box_plots(df_filtered, 'power_saving')
-    gen_box_plots(df_filtered, 'refresh_rate')
-    #I will make 5 plots then call it a day 
-    #So we will have boxplots for each feature 
+    gen_box_plot(df_filtered, 'brightness')
+    gen_box_plot(df_filtered, 'gps')
+    gen_box_plot(df_filtered, 'application_workload')
+    gen_box_plot(df_filtered, 'power_saving')
+    gen_box_plot(df_filtered, 'refresh_rate')
+    gen_violin_plot(df_filtered, 'brightness')
+    gen_violin_plot(df_filtered, 'gps')
+    gen_violin_plot(df_filtered, 'application_workload')
+    gen_violin_plot(df_filtered, 'power_saving')
+    gen_violin_plot(df_filtered, 'refresh_rate')
+    """
+    Not implemented yet
+    """
+   # gen_bell_curve(df, )
+    #gen_bell_curve(df, )
+   # gen_bell_curve()
+   # gen_bell_curve()
+    #gen_bell_curve()
+
+    
