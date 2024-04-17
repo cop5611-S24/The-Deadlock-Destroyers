@@ -30,9 +30,13 @@ def gen_violin_plot(df_filtered, feature):
     plt.savefig(name_to_save)
     plt.clf()
 
-def gen_density_estimation(df, feature):
+def gen_scatter_plot(df, feature):
     #https://seaborn.pydata.org/tutorial/distributions.html
-    pass
+    sns.set_style("whitegrid")
+    sns.swarmplot(data=df, x=feature, y="discharge_rate")
+    name_to_save = 'plots/scatterplots/'+feature+'_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
 
 if __name__=='__main__':
     # https://saturncloud.io/blog/how-to-detect-and-exclude-outliers-in-a-pandas-dataframe/
@@ -54,13 +58,12 @@ if __name__=='__main__':
     gen_violin_plot(df_filtered, 'application_workload')
     gen_violin_plot(df_filtered, 'power_saving')
     gen_violin_plot(df_filtered, 'refresh_rate')
-    """
-    Not implemented yet
-    """
-   # gen_bell_curve(df, )
-    #gen_bell_curve(df, )
-   # gen_bell_curve()
-   # gen_bell_curve()
-    #gen_bell_curve()
+   # gen_scatter_plot(df_filtered, 'brightness')
+  #  gen_scatter_plot(df_filtered, 'gps')
+    #gen_scatter_plot(df_filtered, 'application_workload')
+  #  gen_scatter_plot(df_filtered, 'power_saving')
+   # gen_scatter_plot(df_filtered, 'refresh_rate')
+
+   
 
     
