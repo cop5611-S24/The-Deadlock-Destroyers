@@ -12,7 +12,6 @@ from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
 from sklearn.linear_model import BayesianRidge
 from sklearn.linear_model import LinearRegression
-np.random.seed(41)
 
 def calc_normalized_RMSE(y_test, predicted):
     normalized_RMSE = sqrt(mean_squared_error(y_test, predicted))/ ((max(y_test)) - (min(y_test)))
@@ -76,6 +75,6 @@ if __name__ == "__main__":
     df = pd.read_csv("cleaned_result.csv")
     y = df['discharge_rate']
     df.drop(columns = ['discharge_rate'], inplace=True)
-    # random_forest_regressor(df, y)
-    # bayesian_regressor(df, y)
+    random_forest_regressor(df, y)
+    bayesian_regressor(df, y)
     linear_regressor(df,y)
