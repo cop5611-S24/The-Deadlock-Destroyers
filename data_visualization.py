@@ -59,7 +59,7 @@ if __name__=='__main__':
     gen_violin_plot(df_filtered, 'power_saving')
     gen_violin_plot(df_filtered, 'refresh_rate')
     df_new = df_filtered.drop('timestamp', axis =1)
-    plt.figure(figsize= (10, 15))
+    plt.figure(figsize= (12, 12))
     sns.heatmap(df_new.corr(),annot=True )
     plt.savefig('plots/corr_matrix.png')
     plt.clf()
