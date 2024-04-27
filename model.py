@@ -39,7 +39,6 @@ def optimize_num_of_trees(X_train, X_test, y_train, y_test):
 def random_forest_regressor(df, y):
     X = df 
     X_train, X_test,y_train, y_test = train_test_split(X.to_numpy(), y.to_numpy(), test_size = 0.33, random_state=42)
-    #sklearn https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html
     model = RandomForestRegressor(n_estimators = 30)
     model.fit(X_train, y_train)
     predicted = model.predict(X_test)
@@ -55,7 +54,6 @@ def random_forest_regressor(df, y):
 
 def bayesian_regressor(df, y):
     X = df 
-    #sklearn https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html
     X_train, X_test,y_train, y_test = train_test_split(X.to_numpy(), y.to_numpy(), test_size = 0.33, random_state=42)
     model = BayesianRidge(fit_intercept=False)    
     model.fit(X_train, y_train)

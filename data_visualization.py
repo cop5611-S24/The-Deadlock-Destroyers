@@ -23,7 +23,6 @@ def gen_box_plot(df_filtered, feature):
 
 
 def gen_violin_plot(df_filtered, feature):
-    #https://seaborn.pydata.org/generated/seaborn.violinplot.html
     sns.set_style("whitegrid")
     sns.violinplot(data=df_filtered, x=feature, y="discharge_rate")
     name_to_save = 'plots/violin/'+feature+'_vs_discharge_rate.png'
@@ -31,7 +30,6 @@ def gen_violin_plot(df_filtered, feature):
     plt.clf()
 
 def gen_scatter_plot(df, feature):
-    #https://seaborn.pydata.org/tutorial/distributions.html
     sns.set_style("whitegrid")
     sns.swarmplot(data=df, x=feature, y="discharge_rate")
     name_to_save = 'plots/scatterplots/'+feature+'_vs_discharge_rate.png'
@@ -39,7 +37,6 @@ def gen_scatter_plot(df, feature):
     plt.clf()
 
 if __name__=='__main__':
-    # https://saturncloud.io/blog/how-to-detect-and-exclude-outliers-in-a-pandas-dataframe/
     df = pd.read_csv('cleaned_result.csv')
     first_quartile = df['discharge_rate'].quantile(0.25)
     third_quartile = df['discharge_rate'].quantile(0.75)
