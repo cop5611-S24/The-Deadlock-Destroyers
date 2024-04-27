@@ -3,42 +3,69 @@ import pandas as pd
 import numpy as np 
 import matplotlib.pyplot as plt
 import seaborn as sns 
+from sklearn.preprocessing import MinMaxScaler
 
 import xgboost as xgb 
 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
-
+from sklearn.tree import DecisionTreeClassifier
 color = sns.color_palette()
-if __name__=='__main__':
-    df = pd.read_csv('result.csv')
-    df['timestamp'] = pd.to_datetime(df['timestamp'], unit='s')
-    df.set_index('timestamp', inplace=True)
-    df.plot(y='currentCharge', title='Battery Charge over Time')
-    plt.savefig('plots/charge_v_time/battery_charge.png')
-    df1 = df.loc['2024-03-04']
-    print(df1.head())
-    df2 = df.loc['2024-03-11']
-    print(df2.head())
-    df1.plot(y='currentCharge', title='Battery Charge over Time')
-    plt.savefig('plots/charge_v_time/battery_charge_march4.png')
-    df2.plot(y='currentCharge', title='Battery Charge over Time')
-    plt.savefig('plots/charge_v_time/battery_charge_march11.png')
-    plt.close()
-    ###These scatter plots are busted but I will fix them later#####
-    for column in df1.columns:
-        if column == 'timestamp':
-            continue
-        sns.scatterplot(data=df1, x=df1.index, y=df1['currentCharge'], hue=column, alpha=0.7)
-        df1.plot(y='currentCharge', title='Battery Charge over Time', color ='red')
-        plt.savefig(f'plots/scatterplots/{column}_v_charge_3-04.png')
 
+
+def gen_box_plot(df_filtered, feature):
+    sns.set_style("whitegrid")
+    sns.boxplot(x= feature, y = 'discharge_rate', data= df_filtered)
+    name_to_save = 'plots/boxplot/'+feature + '_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
+
+
+def gen_violin_plot(df_filtered, feature):
+    #https://seaborn.pydata.org/generated/seaborn.violinplot.html
+    sns.set_style("whitegrid")
+    sns.violinplot(data=df_filtered, x=feature, y="discharge_rate")
+    name_to_save = 'plots/violin/'+feature+'_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
+
+def gen_scatter_plot(df, feature):
+    #https://seaborn.pydata.org/tutorial/distributions.html
+    sns.set_style("whitegrid")
+    sns.swarmplot(data=df, x=feature, y="discharge_rate")
+    name_to_save = 'plots/scatterplots/'+feature+'_vs_discharge_rate.png'
+    plt.savefig(name_to_save)
+    plt.clf()
+
+if __name__=='__main__':
+    # https://saturncloud.io/blog/how-to-detect-and-exclude-outliers-in-a-pandas-dataframe/
+    df = pd.read_csv('cleaned_result.csv')
+    first_quartile = df['discharge_rate'].quantile(0.25)
+    third_quartile = df['discharge_rate'].quantile(0.75)
+    inter_quartile_range = third_quartile - first_quartile
+    lower_whisker = first_quartile - 1.5 * inter_quartile_range
+    upper_whisker = third_quartile + 1.5 * inter_quartile_range
+    outliers = df[(df['discharge_rate'] < lower_whisker) | (df['discharge_rate']> upper_whisker)]
+    df_filtered = df.drop(outliers.index)
+    gen_box_plot(df_filtered, 'brightness')
+    gen_box_plot(df_filtered, 'gps')
+    gen_box_plot(df_filtered, 'application_workload')
+    gen_box_plot(df_filtered, 'power_saving')
+    gen_box_plot(df_filtered, 'refresh_rate')
+    gen_violin_plot(df_filtered, 'brightness')
+    gen_violin_plot(df_filtered, 'gps')
+    gen_violin_plot(df_filtered, 'application_workload')
+    gen_violin_plot(df_filtered, 'power_saving')
+    gen_violin_plot(df_filtered, 'refresh_rate')
+    df_new = df_filtered.drop('timestamp', axis =1)
+    df_new_new = df_new.rename(columns={'application_workload': 'workload', 'power_saving': 'powerSave', 'refresh_rate': 'refRate', 'discharge_rate': 'disRate'})
+    plt.figure(figsize= (10, 8))
+    sns.heatmap(df_new_new.corr(),annot=True )
+    plt.savefig('plots/corr_matrix.png')
+    plt.clf()
+
+
+   
 
     
-    for column in df2.columns:
-        if column == 'timestamp':
-            continue
-        sns.scatterplot(data=df2, x=df2.index, y=df2['currentCharge'], hue=column, alpha=0.7)
-        df2.plot(y='currentCharge', title='Battery Charge over Time', color ='red')
-        plt.savefig(f'plots/scatterplots/{column}_v_charge_3-11.png')
